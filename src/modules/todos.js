@@ -1,3 +1,5 @@
+import { createAction, handleActions } from 'redux-actions';
+
 const CHANGE_INPUT = 'todos/CHANGE_INPUT';
 const INSERT = 'todos/INSERT';
 const TOGGLE = 'todos/TOGGLE';
@@ -47,37 +49,28 @@ const initialState = {
 };
 
 // 리듀서 함수
-function todos(state = initialState, action) {
-  switch (action.type) {
-    case CHANGE_INPUT:
-      return {
-        ...state,
-        input: action.input,
-      };
+const todos = handleActions(
+  {
+    [CHANGE_INPUT]: (state, { payload: input }) => ({ ...state, input }),
 
-    case INSERT:
-      return {
-        ...state,
-        todos: state.todos.concat(action.todo),
-      };
+    [INSERT]: (state, { payload: todo }) => ({
+      ...state,
+      todos: state.todos.concat(todo),
+    }),
 
-    case TOGGLE:
-      return {
-        ...state,
-        todos: state.todos.map((todo) =>
-          todo.id === action.id ? { ...todo, done: !todo.done } : todo,
-        ),
-      };
+    [TOGGLE]: (state, { payload: id }) => ({
+      ...state,
+      todos: state.todos.map((todo) =>
+        todo.id === id ? { ...todo, done: !todo.done } : todo,
+      ),
+    }),
 
-    case REMOVE:
-      return {
-        ...state,
-        todos: state.todos.filter((todo) => todo.id !== action.id),
-      };
-
-    default:
-      return state;
-  }
-}
+    [REMOVE]: (state, { payload: id }) => ({
+      ...state,
+      todos: state.todos.filter((todo) => todo.id !== id),
+    }),
+  },
+  initialState,
+);
 
 export default todos;
